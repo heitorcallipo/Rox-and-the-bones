@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rex & os Ossos — Aprenda Algoritmos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22263a;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text: #f0f0f8;
+  --text2: #9a9db8;
+  --text3: #6a6d88;
+  --green: #4ade80;
+  --green-dim: #1a3d28;
+  --blue: #60a5fa;
+  --blue-dim: #1a2a4d;
+  --amber: #fbbf24;
+  --amber-dim: #3d2e0a;
+  --red: #f87171;
+  --red-dim: #3d1a1a;
+  --purple: #a78bfa;
+  --purple-dim: #2a1f4d;
+  --coral: #fb923c;
+  --coral-dim: #3d2010;
+  --teal: #2dd4bf;
+  --teal-dim: #0d2d2a;
+  --pink: #f472b6;
+  --pink-dim: #3d1428;
+  --cell: 48px;
+  --radius: 12px;
+  --font: 'Nunito', sans-serif;
+  --mono: 'Fira Code', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 28px; }
+.logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+.logo-text span { color: var(--amber); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.vidas { font-size: 14px; letter-spacing: 1px; }
+.fase-badge {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+/* ── LAYOUT ── */
+main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 24px 16px;
+  gap: 20px;
+}
+
+/* ── PAINEL ESQUERDO ── */
+.painel-esq {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.card-titulo {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+#fase-titulo {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+#fase-sub {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.conceito-tag {
+  display: inline-block;
+  background: var(--blue-dim);
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Barra de progresso */
+#progresso-wrap { display: flex; flex-direction: column; gap: 6px; }
+.prog-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); }
+.prog-track {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+#dots-fase {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3);
+  transition: all 0.3s;
+  cursor: default;
+}
+.dot.ok { background: var(--green); border-color: var(--green); color: #000; }
+.dot.atual { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* Mapa legenda */
+.legenda { display: flex; gap: 10px; flex-wrap: wrap; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+
+/* Comandos disponíveis */
+#cmds-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.cmd-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.cmd-btn:hover { filter: brightness(1.3); transform: translateY(-1px); }
+.cmd-btn:active { transform: translateY(0); }
+.t-mover     { background: var(--blue-dim);   border-color: var(--blue);   color: var(--blue); }
+.t-virar     { background: var(--green-dim);  border-color: var(--green);  color: var(--green); }
+.t-se        { background: var(--amber-dim);  border-color: var(--amber);  color: var(--amber); }
+.t-enquanto  { background: var(--purple-dim); border-color: var(--purple); color: var(--purple); }
+.t-repetir   { background: var(--coral-dim);  border-color: var(--coral);  color: var(--coral); }
+.t-senao     { background: var(--teal-dim);   border-color: var(--teal);   color: var(--teal); }
+.t-funcao    { background: var(--pink-dim);   border-color: var(--pink);   color: var(--pink); }
+
+/* ── PAINEL DIREITO ── */
+.painel-dir {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* MAPA */
+#mapa-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+}
+#mapa {
+  display: grid;
+  gap: 2px;
+}
+.cel {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  transition: all 0.15s;
+  position: relative;
+}
+.cel.grama { background: rgba(255,255,255,0.02); }
+.cel.parede { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+.cel.dog { background: var(--blue-dim); border-color: var(--blue); }
+.cel.osso { background: var(--amber-dim); border-color: var(--amber); }
+.cel.highlight { box-shadow: 0 0 0 2px var(--green); background: var(--green-dim); }
+.cel.erro-flash { box-shadow: 0 0 0 2px var(--red); background: var(--red-dim); }
+
+/* ÁREA DE CÓDIGO */
+#codigo-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+#codigo-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+#codigo-header-left { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+.max-cmds { font-size: 11px; color: var(--text3); }
+.max-cmds span { color: var(--coral); font-weight: 700; }
+
+#programa {
+  min-height: 52px;
+  background: var(--bg);
+  border: 1px dashed var(--border2);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+#programa .vazio {
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--mono);
+  align-self: center;
+  padding: 4px;
+}
+
+.prog-cmd {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: default;
+  user-select: none;
+  animation: popIn 0.15s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.prog-cmd .remover {
+  opacity: 0.4;
+  cursor: pointer;
+  font-size: 10px;
+  transition: opacity 0.15s;
+  margin-left: 2px;
+}
+.prog-cmd .remover:hover { opacity: 1; }
+.prog-cmd input[type=number] {
+  width: 36px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  color: inherit;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-align: center;
+  padding: 1px 2px;
+}
+
+/* Botões de ação */
+#acoes { display: flex; gap: 8px; }
+#btn-exec {
+  flex: 2;
+  padding: 10px;
+  background: var(--blue);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+#btn-exec:hover { background: #93c5fd; transform: translateY(-1px); }
+#btn-exec:active { transform: translateY(0); }
+#btn-exec:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+#btn-limpar {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+#btn-limpar:hover { background: var(--surface2); color: var(--text); }
+
+/* MENSAGEM */
+#msg {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+.msg-info    { background: var(--surface2); color: var(--text2); border-color: var(--border); }
+.msg-ok      { background: var(--green-dim); color: var(--green); border-color: var(--green); }
+.msg-erro    { background: var(--red-dim); color: var(--red); border-color: var(--red); }
+
+/* ── OVERLAY ── */
+#overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+#overlay.show { display: flex; }
+#overlay-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 36px 40px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+#overlay-emoji { font-size: 52px; margin-bottom: 12px; }
+#overlay-h { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+#overlay-p { font-size: 14px; color: var(--text2); margin-bottom: 24px; line-height: 1.6; }
+#overlay-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  background: var(--blue);
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+#overlay-btn:hover { background: #93c5fd; transform: translateY(-2px); }
+
+/* ── TELA INICIAL ── */
+#tela-inicio {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  text-align: center;
+  padding: 24px;
+}
+#tela-inicio h1 { font-size: 48px; font-weight: 800; margin-bottom: 8px; }
+#tela-inicio h1 span { color: var(--amber); }
+#tela-inicio p { font-size: 16px; color: var(--text2); max-width: 480px; line-height: 1.7; margin-bottom: 32px; }
+.inicio-mascote { font-size: 80px; margin-bottom: 16px; animation: bounce 1.5s ease-in-out infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+.btn-comecar {
+  padding: 14px 40px;
+  background: var(--amber);
+  color: #000;
+  border: none;
+  border-radius: 14px;
+  font-family: var(--font);
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+.btn-comecar:hover { background: #fde68a; transform: scale(1.05); }
+.inicio-mini { font-size: 13px; color: var(--text3); }
+
+/* ── RESPONSIVO ── */
+@media (max-width: 700px) {
+  main { grid-template-columns: 1fr; }
+  :root { --cell: 38px; }
+  .logo-text { font-size: 15px; }
+  #overlay-box { padding: 24px 20px; }
+  #overlay-h { font-size: 20px; }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+/* Animação cão andando */
+@keyframes dogWalk {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.15) rotate(5deg); }
+}
+.cel.dog { animation: dogWalk 0.3s ease; }
+</style>
+</head>
+<body>
+
+<!-- TELA INICIAL -->
+<div id="tela-inicio">
+  <div class="inicio-mascote">🐕</div>
+  <h1>Rex & os <span>Ossos</span></h1>
+  <p>Aprenda lógica de programação guiando o Rex pelos desafios! Use comandos como <strong>mover()</strong>, <strong>se()</strong> e <strong>enquanto()</strong> para encontrar os ossos. 40 fases de dificuldade crescente!</p>
+  <button class="btn-comecar" onclick="iniciarJogo()">🦴 Começar a aventura!</button>
+  <p class="inicio-mini">40 fases · Sequência · Laços · Condicionais · Funções</p>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-icon">🐕</span>
+    <span class="logo-text">Rex & os <span>Ossos</span></span>
+  </div>
+  <div class="header-right">
+    <span class="fase-badge" id="header-fase">Fase 1/40</span>
+    <span class="vidas" id="header-vidas">❤️❤️❤️</span>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <!-- ESQUERDA -->
+  <div class="painel-esq">
+    <!-- Info da fase -->
+    <div class="card">
+      <div class="conceito-tag" id="conceito-tag">Conceito</div>
+      <div id="fase-titulo">Carregando...</div>
+      <div id="fase-sub" style="margin-top:6px;"></div>
+    </div>
+
+    <!-- Progresso -->
+    <div class="card">
+      <div class="card-titulo">Seu progresso</div>
+      <div id="progresso-wrap">
+        <div class="prog-info">
+          <span id="prog-text">0 de 40 concluídas</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div id="dots-fase"></div>
+      </div>
+    </div>
+
+    <!-- Comandos disponíveis -->
+    <div class="card">
+      <div class="card-titulo">Comandos disponíveis</div>
+      <div id="cmds-wrap"></div>
+    </div>
+
+    <!-- Legenda -->
+    <div class="card">
+      <div class="card-titulo">Legenda do mapa</div>
+      <div class="legenda">
+        <div class="leg-item">🐕 Rex</div>
+        <div class="leg-item">🦴 Osso</div>
+        <div class="leg-item">🪨 Parede</div>
+        <div class="leg-item">⭐ Bônus</div>
+        <div class="leg-item">🔥 Perigo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIREITA -->
+  <div class="painel-dir">
+    <!-- Mapa -->
+    <div id="mapa-wrap">
+      <div id="mapa"></div>
+    </div>
+
+    <!-- Código -->
+    <div id="codigo-card">
+      <div id="codigo-header">
+        <div id="codigo-header-left">📝 Seu programa</div>
+        <div class="max-cmds">Máx: <span id="max-label">?</span> comandos</div>
+      </div>
+      <div id="programa">
+        <span class="vazio">// Clique nos comandos para montar seu programa...</span>
+      </div>
+      <div id="acoes">
+        <button id="btn-exec" onclick="executar()">▶ Executar</button>
+        <button id="btn-limpar" onclick="limpar()">✕ Limpar</button>
+      </div>
+    </div>
+
+    <!-- Mensagem -->
+    <div id="msg" class="msg-info">Monte seu programa e execute!</div>
+  </div>
+</main>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div id="overlay-box">
+    <div id="overlay-emoji">🎉</div>
+    <div id="overlay-h">Fase completa!</div>
+    <div id="overlay-p">Muito bem!</div>
+    <button id="overlay-btn" onclick="avancarFase()">Próxima fase →</button>
+  </div>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+//  DEFINIÇÃO DAS 40 FASES
+// ──────────────────────────────────────────────
+const FASES = [
+/* 1 */ {
+  titulo:"Mover para frente",
+  conceito:"Sequência",
+  instrucao:"Em algoritmos, comandos são executados um por um, em ordem. Use mover() para levar o Rex até o osso 4 casas à frente!",
+  grade:5,
+  mapa:[[0,0,0,0,0],[0,0,0,0,0],[2,0,0,0,3],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover'],
+  max:4,
+},
+/* 2 */ {
+  titulo:"Virar e mover",
+  conceito:"Direção",
+  instrucao:"O Rex pode virar! Use virar_direita() ou virar_esquerda() para mudar a direção e então mover() para caminhar.",
+  grade:5,
+  mapa:[[0,0,3,0,0],[0,0,0,0,0],[2,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:6,
+},
+/* 3 */ {
+  titulo:"Desviar de paredes",
+  conceito:"Planejamento",
+  instrucao:"Há paredes bloqueando! Planeje a rota certa — combine mover() e virar para contornar o obstáculo.",
+  grade:5,
+  mapa:[[0,0,0,0,3],[0,1,1,1,0],[2,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:10,
+},
+/* 4 */ {
+  titulo:"Repetição simples",
+  conceito:"Laço — repetir(N)",
+  instrucao:"Em vez de escrever mover() seis vezes, use repetir(6)! É mais elegante. Laços evitam código repetido.",
+  grade:7,
+  mapa:[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,0,0,0,0,0,3],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','repetir'],
+  max:3,
+},
+/* 5 */ {
+  titulo:"Condição SE",
+  conceito:"Condicional SE",
+  instrucao:"se(tem_parede_frente) verifica se há parede à frente. Se for verdadeiro, executa o próximo comando. O Rex aprende a decidir!",
+  grade:5,
+  mapa:[[0,0,0,0,0],[0,0,0,0,0],[2,0,1,0,3],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede'],
+  max:8,
+},
+/* 6 */ {
+  titulo:"SE… SENÃO",
+  conceito:"SE / SENÃO",
+  instrucao:"senao define o que fazer quando a condição é FALSA. Dois caminhos possíveis: se tem parede → vira, senão → move!",
+  grade:5,
+  mapa:[[0,0,3,0,0],[0,0,0,0,0],[2,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','senao'],
+  max:8,
+},
+/* 7 */ {
+  titulo:"Enquanto (while)",
+  conceito:"Laço ENQUANTO",
+  instrucao:"enquanto(sem_osso) repete os comandos até o Rex encontrar o osso. O loop para automaticamente quando a condição muda!",
+  grade:6,
+  mapa:[[0,0,0,0,0,0],[0,0,0,0,0,0],[2,0,0,0,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['enquanto_osso','mover'],
+  max:3,
+},
+/* 8 */ {
+  titulo:"Labirinto com lógica",
+  conceito:"Combinando lógica",
+  instrucao:"Combine SE, ENQUANTO e MOVER para navegar o labirinto. Pense passo a passo antes de executar!",
+  grade:6,
+  mapa:[[0,0,0,0,0,0],[0,1,1,1,0,0],[2,0,0,1,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso'],
+  max:10,
+},
+/* 9 */ {
+  titulo:"Variável contadora",
+  conceito:"Variável",
+  instrucao:"Use repetir(N) de forma estratégica — N é como uma variável! Ache o número certo de passos para cada direção.",
+  grade:6,
+  mapa:[[0,0,0,3,0,0],[0,0,0,0,0,0],[2,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:6,
+},
+/* 10 */ {
+  titulo:"Desafio do labirinto",
+  conceito:"Algoritmo completo",
+  instrucao:"Use tudo que aprendeu! Sequência, repetição, condicionais. Planeje antes de montar o programa.",
+  grade:7,
+  mapa:[[0,0,0,1,0,0,3],[0,1,0,1,0,1,0],[2,1,0,0,0,1,0],[0,1,0,1,0,0,0],[0,0,0,1,0,1,0],[0,0,0,0,0,1,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso','repetir'],
+  max:20,
+},
+/* 11 */ {
+  titulo:"Caminho em L",
+  conceito:"Sequência composta",
+  instrucao:"O osso fica em diagonal. Para chegar lá, o Rex precisa mover em duas direções diferentes — primeiro horizontal, depois vertical!",
+  grade:5,
+  mapa:[[0,0,0,0,0],[0,0,0,0,3],[2,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:8,
+},
+/* 12 */ {
+  titulo:"Volta por cima",
+  conceito:"Rota alternativa",
+  instrucao:"O caminho direto está bloqueado. O Rex precisa dar a volta por cima! Há mais de uma rota — qual é a mais curta?",
+  grade:6,
+  mapa:[[0,0,0,0,0,0],[0,0,0,0,0,0],[2,1,1,1,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:12,
+},
+/* 13 */ {
+  titulo:"Loop com virada",
+  conceito:"Laço com direção",
+  instrucao:"O Rex precisa andar em ziguezague! Use repetir() dentro de uma sequência que inclui viradas.",
+  grade:6,
+  mapa:[[2,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:8,
+},
+/* 14 */ {
+  titulo:"Detectar osso na frente",
+  conceito:"Condicional: tem_osso",
+  instrucao:"se(tem_osso_frente) é verdadeiro quando o osso está logo à frente! Use essa condição para o Rex saber quando parar.",
+  grade:5,
+  mapa:[[0,0,0,0,0],[0,0,0,0,0],[2,0,0,3,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','se_osso_frente','virar_direita'],
+  max:6,
+},
+/* 15 */ {
+  titulo:"Corredor longo",
+  conceito:"Laço otimizado",
+  instrucao:"Use enquanto(sem_osso) + mover() em vez de contar quantas casas andar. O loop para sozinho quando o Rex chegar!",
+  grade:8,
+  mapa:[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[2,0,0,0,0,0,0,3],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['enquanto_osso','mover'],
+  max:3,
+},
+/* 16 */ {
+  titulo:"Rampa em zigue-zague",
+  conceito:"Padrão repetido",
+  instrucao:"Mova 2 casas, vire, mova 1 casa, vire, mova 2 casas... Reconheça o padrão e use repetir() para simplificar!",
+  grade:6,
+  mapa:[[0,0,0,0,0,0],[0,0,0,0,0,0],[2,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,3]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:10,
+},
+/* 17 */ {
+  titulo:"Labirinto com bifurcação",
+  conceito:"Decisão binária",
+  instrucao:"Há duas bifurcações no caminho. O Rex só consegue passar por uma delas. Use se(tem_parede_frente) para escolher o caminho certo!",
+  grade:6,
+  mapa:[[0,0,0,1,0,0],[0,1,0,1,0,0],[2,1,0,0,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede'],
+  max:12,
+},
+/* 18 */ {
+  titulo:"Loop e condição juntos",
+  conceito:"Loop + condicional",
+  instrucao:"Combine enquanto(sem_osso) com se(tem_parede_frente) para o Rex navegar sozinho por um corredor com parede no meio!",
+  grade:7,
+  mapa:[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,0,0,1,0,0,3],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso'],
+  max:8,
+},
+/* 19 */ {
+  titulo:"Contando passos",
+  conceito:"Variável e controle",
+  instrucao:"Quantos passos o Rex dá no total? Use repetir() com o número exato para cada trecho e calcule mentalmente antes!",
+  grade:7,
+  mapa:[[0,0,0,0,0,0,0],[3,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,0,0,0,0,0,0]],
+  dir:'cima',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:6,
+},
+/* 20 */ {
+  titulo:"Metade do caminho",
+  conceito:"Divisão",
+  instrucao:"O mapa tem 8 de largura. O osso está no meio. Qual é a metade de 8? Use repetir() com o número certo!",
+  grade:8,
+  mapa:[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[2,0,0,0,3,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','repetir'],
+  max:3,
+},
+/* 21 */ {
+  titulo:"Serpentina",
+  conceito:"Loop aninhado — ideia",
+  instrucao:"O Rex precisa varrer o mapa em S. Escreva a sequência completa: mova, vire para baixo, mova, vire para o outro lado, mova...",
+  grade:6,
+  mapa:[[2,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,3]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:16,
+},
+/* 22 */ {
+  titulo:"Condição negativa",
+  conceito:"NÃO / negação",
+  instrucao:"enquanto(sem_osso) já é uma negação: repete ENQUANTO NÃO tiver osso. Pense: o contrário de 'tem parede' é 'sem parede'!",
+  grade:7,
+  mapa:[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,0,0,0,0,0,3],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['enquanto_osso','mover','virar_direita'],
+  max:4,
+},
+/* 23 */ {
+  titulo:"Dois ossos, uma rota",
+  conceito:"Sequência com metas",
+  instrucao:"Há dois ossos no mapa! O Rex precisa pegar o primeiro e depois o segundo. Planeje a rota completa!",
+  grade:6,
+  mapa:[[0,0,3,0,0,0],[0,0,0,0,0,0],[2,0,0,0,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  ossos:2,
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:14,
+},
+/* 24 */ {
+  titulo:"Parede em U",
+  conceito:"Rota de desvio",
+  instrucao:"Uma parede em U bloqueia o Rex. Ele precisa dar a volta pelo exterior da U para alcançar o osso dentro!",
+  grade:7,
+  mapa:[[0,1,3,1,0],[0,1,0,1,0],[2,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:14,
+},
+/* 25 */ {
+  titulo:"Labirinto espiral",
+  conceito:"Algoritmo de busca",
+  instrucao:"O labirinto tem forma de espiral! Ande pelas bordas e vá fechando o círculo. Pense na ordem das viradas.",
+  grade:7,
+  mapa:[[2,0,0,0,0],[0,1,1,1,0],[0,1,3,1,0],[0,1,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:16,
+},
+/* 26 */ {
+  titulo:"Loop de busca",
+  conceito:"Busca com loop",
+  instrucao:"O Rex vai buscar o osso usando enquanto(sem_osso) combinado com se(tem_parede_frente) para desviar automaticamente!",
+  grade:7,
+  mapa:[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[2,1,0,1,0,0,3],[0,1,0,1,0,0,0],[0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso'],
+  max:8,
+},
+/* 27 */ {
+  titulo:"Rota mais curta",
+  conceito:"Otimização",
+  instrucao:"Existem dois caminhos para o osso. Qual usa menos comandos? Monte o programa mais CURTO possível!",
+  grade:7,
+  mapa:[[0,0,0,0,3],[0,1,1,0,0],[2,0,1,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:10,
+},
+/* 28 */ {
+  titulo:"Repetir com viradas",
+  conceito:"Padrão complexo",
+  instrucao:"O padrão é: mover 3 vezes, virar à direita. Isso se repete 4 vezes para fazer um quadrado. Encontre o osso no fim!",
+  grade:6,
+  mapa:[[2,0,0,3,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','repetir'],
+  max:6,
+},
+/* 29 */ {
+  titulo:"Sensor de osso",
+  conceito:"Condição composta",
+  instrucao:"Use se(tem_osso_frente) junto com mover() para o Rex avançar e parar exatamente onde está o osso — sem ultrapassar!",
+  grade:5,
+  mapa:[[0,0,0,0,0],[0,0,0,0,0],[2,0,3,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','se_osso_frente','virar_direita','virar_esquerda'],
+  max:5,
+},
+/* 30 */ {
+  titulo:"Grande labirinto",
+  conceito:"Algoritmo real",
+  instrucao:"Um labirinto completo! Use todos os comandos disponíveis. Explore, planeje, execute. Aqui você é o programador!",
+  grade:8,
+  mapa:[[2,0,1,0,0,0,0,0],[0,0,1,0,1,1,1,0],[0,0,0,0,1,0,0,0],[0,1,1,0,0,0,1,0],[0,0,1,0,1,0,1,0],[0,0,0,0,1,0,0,3]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso','repetir'],
+  max:24,
+},
+/* 31 */ {
+  titulo:"Subida e descida",
+  conceito:"Fluxo bidirecional",
+  instrucao:"O Rex começa no centro. O osso está no canto superior esquerdo. Pense: precisa ir para cima E para a esquerda!",
+  grade:5,
+  mapa:[[3,0,0,0,0],[0,0,0,0,0],[0,0,2,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:8,
+},
+/* 32 */ {
+  titulo:"Evitar o fogo",
+  conceito:"Condição de perigo",
+  instrucao:"Há células com fogo 🔥 no mapa! se(tem_perigo_frente) detecta perigo. O Rex deve desviAR para não se machucar!",
+  grade:6,
+  mapa:[[0,0,0,0,3],[0,0,4,0,0],[2,0,0,0,0],[0,0,4,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_perigo'],
+  max:10,
+  temPerigo:true,
+},
+/* 33 */ {
+  titulo:"Coletar bônus",
+  conceito:"Múltiplos objetivos",
+  instrucao:"Além do osso, há uma estrela ⭐ de bônus no caminho! Passe por ela antes de chegar no osso para coletar pontos extras.",
+  grade:6,
+  mapa:[[0,0,0,0,0,0],[0,0,0,0,0,0],[2,0,5,0,0,3],[0,0,0,0,0,0],[0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda'],
+  max:8,
+},
+/* 34 */ {
+  titulo:"Mapa grande",
+  conceito:"Escala",
+  instrucao:"Um mapa maior! As distâncias são maiores. Use repetir() para evitar escrever mover() muitas vezes. Eficiência importa!",
+  grade:9,
+  mapa:[
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [2,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,3],
+  ],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:6,
+},
+/* 35 */ {
+  titulo:"Detectar borda",
+  conceito:"Condição de limite",
+  instrucao:"se(borda_frente) é verdadeiro quando o Rex está na beira do mapa. Use para evitar que ele caia! Vire antes de bater na borda.",
+  grade:6,
+  mapa:[[2,0,0,0,3],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_borda'],
+  max:8,
+},
+/* 36 */ {
+  titulo:"Espelho",
+  conceito:"Simetria",
+  instrucao:"O mapa é simétrico! O Rex começa no centro esquerdo. O osso está na posição espelhada à direita. Movimento espelhado!",
+  grade:7,
+  mapa:[[0,0,0,0,0,0,0],[0,1,0,0,0,1,0],[2,0,0,0,0,0,3],[0,1,0,0,0,1,0],[0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:8,
+},
+/* 37 */ {
+  titulo:"Labirinto de corredores",
+  conceito:"Busca em profundidade",
+  instrucao:"Vários corredores — só um leva ao osso. Use se(tem_parede_frente) para explorar e enquanto(sem_osso) para continuar buscando!",
+  grade:7,
+  mapa:[[0,1,0,1,0,1,3],[0,1,0,1,0,0,0],[2,0,0,0,0,1,0],[0,0,0,1,0,1,0],[0,0,0,1,0,0,0]],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso'],
+  max:16,
+},
+/* 38 */ {
+  titulo:"Código mínimo",
+  conceito:"Elegância",
+  instrucao:"Desafio de elegância! Monte o programa com o MENOR número possível de comandos. Você tem limite de 4 linhas de código!",
+  grade:8,
+  mapa:[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[2,0,0,0,0,0,0,3],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]],
+  dir:'direita',
+  comandos:['enquanto_osso','mover','repetir'],
+  max:3,
+},
+/* 39 */ {
+  titulo:"Rota em cruz",
+  conceito:"Múltiplas direções",
+  instrucao:"O Rex começa no centro do mapa. O osso está em uma das extremidades. Teste as direções e planeje bem!",
+  grade:7,
+  mapa:[[0,0,3,0,0],[0,0,0,0,0],[0,0,2,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+  dir:'cima',
+  comandos:['mover','virar_direita','virar_esquerda','repetir'],
+  max:6,
+},
+/* 40 */ {
+  titulo:"🏆 Desafio supremo!",
+  conceito:"Mestre dos algoritmos",
+  instrucao:"O desafio final! Um labirinto complexo que exige tudo: sequência, laços, condicionais, otimização e estratégia. Você é mestre em algoritmos! Use todos os comandos com sabedoria.",
+  grade:9,
+  mapa:[
+    [2,0,1,0,0,1,0,0,0],
+    [0,0,1,0,1,1,0,1,0],
+    [0,1,1,0,1,0,0,1,0],
+    [0,0,0,0,0,0,1,1,0],
+    [0,1,1,1,1,0,0,0,0],
+    [0,0,0,0,1,1,1,0,3],
+  ],
+  dir:'direita',
+  comandos:['mover','virar_direita','virar_esquerda','se_parede','enquanto_osso','repetir'],
+  max:30,
+},
+];
+
+// ──────────────────────────────────────────────
+//  ESTADO DO JOGO
+// ──────────────────────────────────────────────
+let faseIdx = 0;
+let vidas = 3;
+let concluidas = new Set();
+let dogPos = {r:0,c:0};
+let dogDir = 'direita';
+let programa = [];
+let animando = false;
+let mapaEstado = [];
+let ossosPegos = 0;
+
+const DIRS = ['cima','direita','baixo','esquerda'];
+const DCMD = {
+  cima:    {dr:-1,dc:0},
+  direita: {dr:0, dc:1},
+  baixo:   {dr:1, dc:0},
+  esquerda:{dr:0, dc:-1},
+};
+
+const CMD_INFO = {
+  mover:        {label:'mover()',              cls:'t-mover'},
+  virar_direita:{label:'virar_direita()',      cls:'t-virar'},
+  virar_esquerda:{label:'virar_esquerda()',   cls:'t-virar'},
+  se_parede:    {label:'se(tem_parede_frente)',cls:'t-se'},
+  se_osso_frente:{label:'se(tem_osso_frente)',cls:'t-se'},
+  se_perigo:    {label:'se(tem_perigo_frente)',cls:'t-se'},
+  se_borda:     {label:'se(borda_frente)',     cls:'t-se'},
+  senao:        {label:'senao',                cls:'t-senao'},
+  enquanto_osso:{label:'enquanto(sem_osso)',   cls:'t-enquanto'},
+  repetir:      {label:'repetir(N)',           cls:'t-repetir'},
+};
+
+// ──────────────────────────────────────────────
+//  INICIAR
+// ──────────────────────────────────────────────
+function iniciarJogo() {
+  document.getElementById('tela-inicio').style.display = 'none';
+  initFase();
+}
+
+function initFase() {
+  const f = FASES[faseIdx];
+  mapaEstado = f.mapa.map(r=>[...r]);
+  ossosPegos = 0;
+
+  for(let r=0;r<mapaEstado.length;r++)
+    for(let c=0;c<mapaEstado[r].length;c++)
+      if(mapaEstado[r][c]===2){ dogPos={r,c}; }
+
+  dogDir = f.dir || 'direita';
+  programa = [];
+
+  // Header
+  document.getElementById('header-fase').textContent = `Fase ${faseIdx+1}/40`;
+  document.getElementById('header-vidas').textContent = '❤️'.repeat(Math.max(0,vidas));
+
+  // Painel
+  document.getElementById('conceito-tag').textContent = f.conceito;
+  document.getElementById('fase-titulo').textContent = f.titulo;
+  document.getElementById('fase-sub').textContent = f.instrucao;
+  document.getElementById('max-label').textContent = f.max;
+
+  // Ajusta cell size por grade
+  const sz = f.grade >= 9 ? 38 : f.grade >= 8 ? 42 : f.grade >= 7 ? 44 : 48;
+  document.documentElement.style.setProperty('--cell', sz+'px');
+
+  renderProgresso();
+  renderMapa();
+  renderCmds();
+  renderPrograma();
+  setMsg('Monte seu programa e execute! 🐾','msg-info');
+}
+
+// ──────────────────────────────────────────────
+//  PROGRESSO
+// ──────────────────────────────────────────────
+function renderProgresso() {
+  const pct = Math.round((concluidas.size/40)*100);
+  document.getElementById('prog-text').textContent = `${concluidas.size} de 40 concluídas`;
+  document.getElementById('prog-pct').textContent = pct+'%';
+  document.getElementById('prog-fill').style.width = pct+'%';
+
+  const wrap = document.getElementById('dots-fase');
+  wrap.innerHTML='';
+  for(let i=0;i<40;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (concluidas.has(i)?' ok':i===faseIdx?' atual':'');
+    d.textContent = i+1;
+    d.title = FASES[i].titulo;
+    d.style.cursor = concluidas.has(i)||i===faseIdx?'default':'default';
+    wrap.appendChild(d);
+  }
+}
+
+// ──────────────────────────────────────────────
+//  MAPA
+// ──────────────────────────────────────────────
+const CELL_EMOJI = {0:'',1:'🪨',2:'',3:'🦴',4:'🔥',5:'⭐',9:''};
+
+function renderMapa() {
+  const f = FASES[faseIdx];
+  const el = document.getElementById('mapa');
+  el.style.gridTemplateColumns = `repeat(${mapaEstado[0].length},var(--cell))`;
+  el.innerHTML='';
+  for(let r=0;r<mapaEstado.length;r++){
+    for(let c=0;c<mapaEstado[r].length;c++){
+      const cel = document.createElement('div');
+      cel.className='cel';
+      cel.id=`c${r}_${c}`;
+      const v=mapaEstado[r][c];
+      if(v===1) cel.classList.add('parede');
+      else if(v===3) cel.classList.add('osso');
+      else cel.classList.add('grama');
+      if(r===dogPos.r&&c===dogPos.c){ cel.classList.add('dog'); cel.textContent='🐕'; }
+      else if(v!==0 && v!==2) cel.textContent=CELL_EMOJI[v]||'';
+      el.appendChild(cel);
+    }
+  }
+}
+
+function atualizarCel(r,c){
+  const el=document.getElementById(`c${r}_${c}`);
+  if(!el)return;
+  el.className='cel';
+  el.textContent='';
+  const v=mapaEstado[r][c];
+  if(v===1){el.classList.add('parede');el.textContent='🪨';}
+  else if(v===3){el.classList.add('osso');}
+  else if(v===4){el.textContent='🔥';}
+  else if(v===5){el.textContent='⭐';}
+  else el.classList.add('grama');
+
+  if(r===dogPos.r&&c===dogPos.c){
+    el.classList.add('dog');
+    el.textContent='🐕';
+  }
+}
+
+// ──────────────────────────────────────────────
+//  COMANDOS
+// ──────────────────────────────────────────────
+function renderCmds(){
+  const wrap=document.getElementById('cmds-wrap');
+  wrap.innerHTML='';
+  FASES[faseIdx].comandos.forEach(cmd=>{
+    const inf=CMD_INFO[cmd];
+    if(!inf)return;
+    const b=document.createElement('button');
+    b.className='cmd-btn '+inf.cls;
+    b.textContent=inf.label;
+    b.onclick=()=>addCmd(cmd);
+    wrap.appendChild(b);
+  });
+}
+
+function addCmd(tipo){
+  if(programa.length>=FASES[faseIdx].max){setMsg('Limite de comandos atingido!','msg-erro');return;}
+  programa.push(tipo==='repetir'?{tipo,valor:2}:{tipo});
+  renderPrograma();
+}
+
+function remCmd(i){programa.splice(i,1);renderPrograma();}
+
+function limpar(){programa=[];renderPrograma();setMsg('Programa limpo. Comece de novo!','msg-info');}
+
+function renderPrograma(){
+  const el=document.getElementById('programa');
+  el.innerHTML='';
+  if(programa.length===0){
+    el.innerHTML='<span class="vazio">// Clique nos comandos para montar seu programa...</span>';
+    return;
+  }
+  programa.forEach((cmd,i)=>{
+    const inf=CMD_INFO[cmd.tipo];
+    if(!inf)return;
+    const div=document.createElement('div');
+    div.className='prog-cmd '+inf.cls;
+    if(cmd.tipo==='repetir'){
+      div.innerHTML=`repetir(<input type="number" id="ri${i}" min="1" max="30" value="${cmd.valor}"> vezes)<span class="remover" onclick="remCmd(${i})">✕</span>`;
+    } else {
+      div.innerHTML=`${inf.label}<span class="remover" onclick="remCmd(${i})">✕</span>`;
+    }
+    el.appendChild(div);
+    if(cmd.tipo==='repetir'){
+      setTimeout(()=>{
+        const inp=document.getElementById(`ri${i}`);
+        if(inp) inp.oninput=()=>{programa[i].valor=parseInt(inp.value)||1;};
+      },0);
+    }
+  });
+}
+
+// ──────────────────────────────────────────────
+//  EXECUÇÃO
+// ──────────────────────────────────────────────
+function setMsg(txt,cls){
+  const el=document.getElementById('msg');
+  el.textContent=txt;
+  el.className='msg '+cls;
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+async function executar(){
+  if(animando)return;
+  animando=true;
+  document.getElementById('btn-exec').disabled=true;
+
+  // reset
+  mapaEstado=FASES[faseIdx].mapa.map(r=>[...r]);
+  ossosPegos=0;
+  for(let r=0;r<mapaEstado.length;r++)
+    for(let c=0;c<mapaEstado[r].length;c++)
+      if(mapaEstado[r][c]===2){dogPos={r,c};}
+  dogDir=FASES[faseIdx].dir||'direita';
+  renderMapa();
+  await sleep(100);
+
+  const res=await execPrograma(programa);
+
+  animando=false;
+  document.getElementById('btn-exec').disabled=false;
+
+  const f=FASES[faseIdx];
+  const ossosNecessarios=f.ossos||1;
+
+  if(res==='ganhou'||(res==='ok'&&ossosPegos>=ossosNecessarios)){
+    setMsg('🎉 Rex encontrou o osso! Muito bem!','msg-ok');
+    concluidas.add(faseIdx);
+    renderProgresso();
+    setTimeout(()=>showOverlay(),600);
+  } else if(res==='perigo'){
+    vidas--;
+    document.getElementById('header-vidas').textContent='❤️'.repeat(Math.max(0,vidas));
+    if(vidas<=0){
+      setMsg('😵 Sem vidas! Recomeçando...','msg-erro');
+      setTimeout(()=>{vidas=3;initFase();},1500);
+    } else {
+      setMsg(`🔥 Rex caiu no fogo! ${vidas} vida(s) restante(s).`,'msg-erro');
+      setTimeout(()=>initFase(),1200);
+    }
+  } else if(res==='erro'){
+    vidas--;
+    document.getElementById('header-vidas').textContent='❤️'.repeat(Math.max(0,vidas));
+    if(vidas<=0){
+      setMsg('💔 Sem vidas! Recomeçando...','msg-erro');
+      setTimeout(()=>{vidas=3;initFase();},1500);
+    } else {
+      setMsg(`🪨 Rex bateu em uma parede! ${vidas} vida(s) restante(s).`,'msg-erro');
+      setTimeout(()=>initFase(),1200);
+    }
+  } else {
+    setMsg('🤔 Rex terminou sem achar o osso. Tente outra estratégia!','msg-erro');
+    setTimeout(()=>initFase(),1500);
+  }
+}
+
+async function execPrograma(cmds, depth=0){
+  if(depth>8)return'ok';
+  let i=0;
+  while(i<cmds.length){
+    const cmd=cmds[i];
+    let r;
+    if(cmd.tipo==='mover'){
+      r=await moverDog();
+      if(r==='ganhou'||r==='perigo'||r==='erro')return r;
+    } else if(cmd.tipo==='virar_direita'){
+      virar('r');await sleep(220);
+    } else if(cmd.tipo==='virar_esquerda'){
+      virar('l');await sleep(220);
+    } else if(cmd.tipo==='repetir'){
+      const n=parseInt(cmd.valor)||1;
+      for(let k=0;k<n;k++){
+        r=await moverDog();
+        if(r==='ganhou'||r==='perigo'||r==='erro')return r;
+      }
+    } else if(cmd.tipo==='se_parede'||cmd.tipo==='se_osso_frente'||cmd.tipo==='se_perigo'||cmd.tipo==='se_borda'){
+      const cond=avaliarCond(cmd.tipo);
+      i++;
+      if(i<cmds.length){
+        const nextCmd=cmds[i];
+        let hasSenao=(i+1<cmds.length&&cmds[i+1].tipo==='senao');
+        if(cond){
+          r=await execPrograma([nextCmd],depth+1);
+          if(r==='ganhou'||r==='perigo'||r==='erro')return r;
+          if(hasSenao)i++;
+        } else {
+          if(hasSenao){i++;i++;if(i<cmds.length){r=await execPrograma([cmds[i]],depth+1);if(r==='ganhou'||r==='perigo'||r==='erro')return r;}}
+        }
+      }
+    } else if(cmd.tipo==='enquanto_osso'){
+      let guard=0;
+      const nextCmd=cmds[i+1];
+      while(!noOsso()&&guard<60){
+        guard++;
+        if(nextCmd){r=await execPrograma([nextCmd],depth+1);if(r==='ganhou'||r==='perigo'||r==='erro')return r;}
+        if(noOsso()){ossosPegos++;return'ganhou';}
+      }
+      if(noOsso()){ossosPegos++;return'ganhou';}
+      i++;
+    }
+    if(noOsso()){ossosPegos++;if(ossosPegos>=(FASES[faseIdx].ossos||1))return'ganhou';}
+    i++;
+  }
+  return'ok';
+}
+
+function avaliarCond(tipo){
+  if(tipo==='se_parede')return temNaFrente(1);
+  if(tipo==='se_osso_frente')return temNaFrente(3);
+  if(tipo==='se_perigo')return temNaFrente(4);
+  if(tipo==='se_borda'){
+    const d=DCMD[dogDir];
+    const nr=dogPos.r+d.dr,nc=dogPos.c+d.dc;
+    return nr<0||nc<0||nr>=mapaEstado.length||nc>=mapaEstado[0].length;
+  }
+  return false;
+}
+
+function temNaFrente(val){
+  const d=DCMD[dogDir];
+  const nr=dogPos.r+d.dr,nc=dogPos.c+d.dc;
+  if(nr<0||nc<0||nr>=mapaEstado.length||nc>=mapaEstado[0].length)return val===1;
+  return mapaEstado[nr][nc]===val;
+}
+
+function noOsso(){return mapaEstado[dogPos.r][dogPos.c]===3||mapaEstado[dogPos.r][dogPos.c]===9;}
+
+async function moverDog(){
+  const d=DCMD[dogDir];
+  const nr=dogPos.r+d.dr,nc=dogPos.c+d.dc;
+  if(nr<0||nc<0||nr>=mapaEstado.length||nc>=mapaEstado[0].length){
+    const el=document.getElementById(`c${dogPos.r}_${dogPos.c}`);
+    if(el){el.classList.add('erro-flash');setTimeout(()=>el.classList.remove('erro-flash'),400);}
+    return'erro';
+  }
+  const dest=mapaEstado[nr][nc];
+  if(dest===1){
+    const el=document.getElementById(`c${dogPos.r}_${dogPos.c}`);
+    if(el){el.classList.add('erro-flash');setTimeout(()=>el.classList.remove('erro-flash'),400);}
+    return'erro';
+  }
+  // limpar cel atual
+  const prev=mapaEstado[dogPos.r][dogPos.c];
+  mapaEstado[dogPos.r][dogPos.c]=prev===9?0:0;
+  atualizarCel(dogPos.r,dogPos.c);
+
+  dogPos={r:nr,c:nc};
+  if(dest===5){mapaEstado[nr][nc]=0;}
+  else if(dest===4){
+    mapaEstado[nr][nc]=4;
+    atualizarCel(nr,nc);
+    await sleep(300);
+    return'perigo';
+  } else if(dest===3){
+    mapaEstado[nr][nc]=9;
+  }
+  atualizarCel(nr,nc);
+  await sleep(250);
+  if(dest===3)return'ganhou';
+  return'ok';
+}
+
+function virar(lado){
+  const idx=DIRS.indexOf(dogDir);
+  dogDir=lado==='r'?DIRS[(idx+1)%4]:DIRS[(idx+3)%4];
+  atualizarCel(dogPos.r,dogPos.c);
+}
+
+// ──────────────────────────────────────────────
+//  OVERLAY
+// ──────────────────────────────────────────────
+function showOverlay(){
+  const ultimo=faseIdx>=39;
+  document.getElementById('overlay-emoji').textContent=ultimo?'🏆':'🦴';
+  document.getElementById('overlay-h').textContent=ultimo?'Você é mestre em algoritmos!':'Fase concluída!';
+  const conceitos=['Sequência','Direção','Planejamento','Laço repetir()','Condicional SE','SE/SENÃO','Laço ENQUANTO','Combinando lógica','Variável','Algoritmo completo','Sequência composta','Rota alternativa','Loop com virada','Condição tem_osso','Laço otimizado','Padrão repetido','Decisão binária','Loop + condicional','Contando passos','Divisão','Serpentina','Negação','Múltiplos objetivos','Rota de desvio','Espiral','Busca com loop','Otimização','Padrão complexo','Condição composta','Grande labirinto','Fluxo bidirecional','Condição de perigo','Múltiplos objetivos','Escala','Limite/borda','Simetria','Busca em profundidade','Elegância','Múltiplas direções','Mestre dos algoritmos'];
+  document.getElementById('overlay-p').innerHTML = ultimo
+    ? `Parabéns! Você completou todas as 40 fases e dominou os fundamentos de lógica de programação! O Rex (e você) são verdadeiros programadores! 🐕💻`
+    : `<strong>Aprendizado:</strong> ${conceitos[faseIdx]||'Lógica'}!<br><small>Fase ${faseIdx+1} de 40 — ${concluidas.size} concluídas</small>`;
+
+  const btn=document.getElementById('overlay-btn');
+  if(ultimo){
+    btn.textContent='🔄 Jogar novamente';
+    btn.onclick=()=>{faseIdx=0;vidas=3;concluidas.clear();document.getElementById('overlay').classList.remove('show');initFase();};
+  } else {
+    btn.textContent='Próxima fase →';
+    btn.onclick=avancarFase;
+  }
+  document.getElementById('overlay').classList.add('show');
+}
+
+function avancarFase(){
+  document.getElementById('overlay').classList.remove('show');
+  if(faseIdx<39){faseIdx++;vidas=3;initFase();}
+}
+</script>
+</body>
+</html>
